@@ -16,7 +16,7 @@ input,select,textarea,button{font:inherit;color:var(--tx);background:var(--sf);b
 input[type=text],#url{flex:1;min-width:180px}
 button{cursor:pointer}button:hover{border-color:var(--ac)}
 button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
-main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-top:12px}
+main{display:grid;grid-template-columns:var(--cols,minmax(0,1.15fr) minmax(0,1fr));gap:14px;margin-top:12px}
 @media(max-width:900px){main{grid-template-columns:1fr}}
 .card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
 .vid{position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
@@ -65,7 +65,7 @@ summary{cursor:pointer;font-weight:600}
  <div class="vid"><iframe id="fr" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div id="ph">Cola um link do YouTube para começar</div></div>
  <div class="bar"><b>Tempo</b><input id="tm" value="0:00" readonly>
   <button onclick="sk(-5)">−5 s</button><button onclick="pp()">▶ / ❚❚</button><button onclick="sk(5)">+5 s</button>
-  <span class="mu">Recuar ao registar <input type="number" id="pre" value="3" min="0" max="30" style="width:60px" onchange="sv()"> s</span></div>
+  <span class="mu">Tamanho do vídeo <input type="range" id="vw" min="35" max="100" step="5" value="57" oninput="vws(this.value)" style="width:110px;padding:0"></span><span class="mu">Recuar ao registar <input type="number" id="pre" value="3" min="0" max="30" style="width:60px" onchange="sv()"> s</span></div>
  <div id="sync" class="warn" hidden>Não foi possível sincronizar com o leitor. Escreve o tempo (mm:ss) no campo “Tempo” antes de registar.</div>
  <div class="card"><div id="sticky" class="grid"></div><div id="acts" class="acts"></div>
   <p class="mu" style="margin:8px 0 0">Atalhos: 1–9 (e 0) registam a ação · Espaço pausa/retoma · ← → saltam 5 s</p></div>
@@ -162,6 +162,8 @@ async function cp(){if(!view.length)return;try{await navigator.clipboard.writeTe
 addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;
  if(/^[0-9]$/.test(e.key)){const o=cfg.fields[0].opts[e.key==='0'?9:+e.key-1];if(o){add(o);e.preventDefault()}}
  else if(e.key===' '){pp();e.preventDefault()}else if(e.key==='ArrowLeft'){sk(-5);e.preventDefault()}else if(e.key==='ArrowRight'){sk(5);e.preventDefault()}});
+function vws(p){p=+p;$('main').style.setProperty('--cols',p>=100?'1fr':`minmax(0,${p}%) minmax(0,1fr)`);ST.set('ft_vw',p)}
+const vwv=ST.get('ft_vw');if(vwv){$('#vw').value=vwv;vws(vwv)}
 const pr=ST.get('ft_pre');if(pr!=null)$('#pre').value=pr;
 rs();rc();gl();rf();rl();const last=ST.get('ft_last');if(last){$('#url').value=last}
 </script></body></html>
