@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-PT"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registo de ações em vídeo</title>
+<style>
+:root{--bg:#f6f7f5;--sf:#fff;--tx:#1b1f1c;--mu:#667069;--bd:#dde1dc;--ac:#1f7a4d;--ac2:#e3f1e9;--dg:#b3382c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141815;--sf:#1d221e;--tx:#e8ece9;--mu:#9aa59d;--bd:#2f3731;--ac:#4cc58a;--ac2:#1e3328;--dg:#f0766a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141815;--sf:#1d221e;--tx:#e8ece9;--mu:#9aa59d;--bd:#2f3731;--ac:#4cc58a;--ac2:#1e3328;--dg:#f0766a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:14px}
+h1{font-size:19px;margin:0 0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,textarea,button{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
+input[type=text],#url{flex:1;min-width:180px}
+button{cursor:pointer}button:hover{border-color:var(--ac)}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+.vid{position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#ph[hidden]{display:none}
+#ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;text-align:center;padding:20px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+#tm{width:84px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.warn{background:var(--ac2);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.grid label,.fl label{font-size:12px;color:var(--mu);display:block}
+.grid select,.grid input{width:100%}
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.acts button{text-align:left;padding:10px;font-weight:600;background:var(--ac2);border-color:transparent}
+.acts button small{color:var(--mu);font-weight:400;margin-right:6px}
+summary{cursor:pointer;font-weight:600}
+.cf{border-top:1px solid var(--bd);padding:10px 0}
+.cf textarea{width:100%;min-height:70px}
+.mu{color:var(--mu);font-size:13px}
+.fl{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-bottom:8px}
+.fl select{width:100%}
+.it{display:flex;gap:8px;align-items:flex-start;border-top:1px solid var(--bd);padding:8px 0}
+.tt{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ac);padding:4px 8px}
+.tg{flex:1;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.tag{background:var(--bg);border:1px solid var(--bd);border-radius:99px;padding:1px 9px;font-size:13px}
+.tag.a{background:var(--ac2);border-color:transparent;font-weight:600}
+.nt{flex:1 1 100%;font-size:13px;padding:4px 8px}
+.x{color:var(--dg);padding:2px 9px}
+#lst{max-height:60vh;overflow-y:auto}
+.gm{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.gm label{font-size:12px;color:var(--mu);display:block}
+.gm input,.gm select{width:100%}
+</style></head><body><div class="wrap">
+<h1>⚽ Registo de ações em vídeo</h1>
+<div class="row"><input id="url" type="text" placeholder="Cola aqui o link do vídeo do YouTube"><button class="p" onclick="load()">Carregar vídeo</button><select id="gl" onchange="og(this.value)" style="max-width:260px"></select></div>
+<div class="card" style="margin-top:10px"><div class="gm">
+<div><label>Competição</label><input type="text" id="g_comp" list="dl_comp" oninput="gs('comp',this.value)"></div>
+<div><label>Jornada</label><input type="text" id="g_jor" oninput="gs('jor',this.value)"></div>
+<div><label>Adversário</label><input type="text" id="g_adv" list="dl_adv" oninput="gs('adv',this.value)"></div>
+<div><label>Data</label><input type="date" id="g_data" onchange="gs('data',this.value)"></div>
+<div><label>Local</label><select id="g_loc" onchange="gs('loc',this.value)"><option value="">—</option><option>Casa</option><option>Fora</option><option>Neutro</option></select></div>
+<div style="align-self:end"><button class="x" onclick="rmg()">Remover jogo</button></div></div>
+<datalist id="dl_comp"></datalist><datalist id="dl_adv"></datalist></div>
+<main>
+<section>
+ <div class="vid"><iframe id="fr" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div id="ph">Cola um link do YouTube para começar</div></div>
+ <div class="bar"><b>Tempo</b><input id="tm" value="0:00" readonly>
+  <button onclick="sk(-5)">−5 s</button><button onclick="pp()">▶ / ❚❚</button><button onclick="sk(5)">+5 s</button>
+  <span class="mu">Recuar ao registar <input type="number" id="pre" value="3" min="0" max="30" style="width:60px" onchange="sv()"> s</span></div>
+ <div id="sync" class="warn" hidden>Não foi possível sincronizar com o leitor. Escreve o tempo (mm:ss) no campo “Tempo” antes de registar.</div>
+ <div class="card"><div id="sticky" class="grid"></div><div id="acts" class="acts"></div>
+  <p class="mu" style="margin:8px 0 0">Atalhos: 1–9 (e 0) registam a ação · Espaço pausa/retoma · ← → saltam 5 s</p></div>
+ <div class="card"><details><summary>⚙ Configurar parâmetros e ações</summary>
+  <div class="row" style="margin:10px 0"><span class="mu">Modelos:</span><button onclick="preset('gr')">Guarda-redes</button><button onclick="preset('campo')">Jogadores de campo</button></div>
+  <p class="mu">O 1.º parâmetro define os botões de ação. Uma opção por linha; sem opções, o campo fica de texto livre (ex.: jogador).</p>
+  <div id="cfg"></div><button onclick="addF()">+ Adicionar parâmetro</button></details></div>
+</section>
+<section>
+ <div class="card"><b>Registos</b> <select id="scope" onchange="scope=this.value;clr()"><option value="one">Este jogo</option><option value="all">Todos os jogos</option></select> <span id="cnt" class="mu"></span>
+  <div id="fl" class="fl" style="margin-top:8px"></div>
+  <div class="row" style="margin-bottom:6px"><input id="q" type="text" placeholder="Pesquisar nas notas e valores…" oninput="q=this.value.toLowerCase();rl()">
+   <button onclick="clr()">Limpar filtros</button></div>
+  <div id="sum" class="mu" style="margin-bottom:6px"></div>
+  <div id="lst"></div>
+  <div class="row" style="margin-top:10px"><button class="p" id="bd" onclick="csv(1)">Exportar CSV (filtrados)</button><button onclick="csv(0)">Exportar CSV (todos)</button><button onclick="cp()">Copiar para Excel</button><button class="x" onclick="delAll()">Apagar todos</button></div>
+  <p class="mu" id="msg"></p></div>
+</section></main></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ST={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const RES=['Positivo','Neutro','Negativo'],FASE=['Org. ofensiva','Org. defensiva','Transição ofensiva','Transição defensiva','Bola parada'],LADO=['Esquerdo','Central','Direito'];
+const P={
+gr:{fields:[{id:'acao',label:'Ação',opts:['Defesa','Saída aos pés','Saída aérea / cruzamento','Jogo de pés (passe)','Reposição com a mão','Pontapé de baliza','1x1','Posicionamento / comunicação','Golo sofrido']},
+{id:'res',label:'Resultado',opts:RES},{id:'fase',label:'Fase de jogo',opts:FASE},{id:'zona',label:'Zona',opts:['Pequena área','Grande área','Fora da área','Meio-campo','Campo adversário']},{id:'lado',label:'Lado',opts:LADO},{id:'jog',label:'Jogador',opts:[]}]},
+campo:{fields:[{id:'acao',label:'Ação',opts:['Passe','Remate','Drible','Desarme','Interceção','Duelo aéreo','Pressão','Cruzamento','Perda de bola','Recuperação de bola']},
+{id:'res',label:'Resultado',opts:RES},{id:'fase',label:'Fase de jogo',opts:FASE},{id:'zona',label:'Zona',opts:['Terço defensivo','Terço médio','Terço ofensivo']},{id:'lado',label:'Lado',opts:LADO},{id:'jog',label:'Jogador',opts:[]}]}};
+let games=ST.get('ft_games')||[],gfilt={},scope='one',pend=null,view=[],cache={},cfg=ST.get('ft_cfg')||JSON.parse(JSON.stringify(P.gr)),vid=null,ev=[],T=0,synced=false,playing=false,filt={},q='',sticky={},ping=null;
+const fm=t=>{t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0')};
+const pt=s=>{const p=String(s).trim().split(':').map(Number);if(p.some(isNaN))return 0;return p.reduce((a,b)=>a*60+b,0)};
+const GF=[['comp','Competição'],['jor','Jornada'],['adv','Adversário'],['loc','Local']];
+const cur=()=>games.find(g=>g.vid===vid);
+const lab=g=>[g.jor&&'J'+g.jor,g.adv&&'vs '+g.adv,g.comp].filter(Boolean).join(' · ')||'Jogo '+(games.indexOf(g)+1)+' (sem identificação)';
+function sg(){ST.set('ft_games',games);gl()}
+function gl(){$('#gl').innerHTML='<option value="">Jogos guardados…</option>'+games.map(g=>`<option value="${g.vid}"${g.vid===vid?' selected':''}>${esc(lab(g))}</option>`).join('');
+ ['comp','adv'].forEach(k=>$('#dl_'+k).innerHTML=[...new Set(games.map(g=>g[k]).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join(''))}
+function gfill(){const g=cur()||{};['comp','jor','adv','data','loc'].forEach(k=>$('#g_'+k).value=g[k]||'');gl()}
+function gs(k,v){const g=cur();if(!g){$('#msg').textContent='Carrega primeiro um vídeo.';return}g[k]=v;sg();rf();rl()}
+function og(v){const g=games.find(x=>x.vid===v);if(g){$('#url').value=g.url;load()}}
+function rmg(){const g=cur();if(g&&confirm('Remover este jogo e todos os seus registos?')){games=games.filter(x=>x!==g);try{localStorage.removeItem('ft_ev_'+g.vid)}catch(e){}ev=[];vid=null;sg();$('#fr').src='about:blank';$('#ph').hidden=false;gfill();clr()}}
+function sv(){ST.set('ft_cfg',cfg);ST.set('ft_pre',$('#pre').value)}
+function save(){if(vid)ST.set('ft_ev_'+vid,ev)}
+function cmd(f,a){const w=$('#fr').contentWindow;if(w)w.postMessage(JSON.stringify({event:'command',func:f,args:a||[]}),'*')}
+function load(){const u=$('#url').value.trim(),m=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
+ if(!m){$('#msg').textContent='Link não reconhecido. Usa um link do YouTube.';return}
+ vid=m[1];ST.set('ft_last',u);ev=ST.get('ft_ev_'+vid)||[];let g=cur();if(!g){g={vid,comp:'',jor:'',adv:'',data:'',loc:'',url:u};games.push(g);sg()}gfill();synced=false;T=0;$('#ph').hidden=true;$('#sync').hidden=true;$('#msg').textContent='';
+ $('#fr').src='https://www.youtube.com/embed/'+vid+'?enablejsapi=1&playsinline=1&rel=0';tmUpd();
+ clearInterval(ping);let n=0;ping=setInterval(()=>{n++;if(synced){clearInterval(ping);return}
+  const w=$('#fr').contentWindow;if(w)w.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*');
+  if(n>6)$('#sync').hidden=synced;},1000);
+ if(scope==='one'){filt={};gfilt={}}rf();rl();}
+addEventListener('message',e=>{if(!/youtube\.com$/.test(e.origin))return;let d;try{d=JSON.parse(e.data)}catch(_){return}
+ const i=d.info;if(!i)return;if(typeof i.currentTime==='number'){T=i.currentTime;synced=true;$('#sync').hidden=true;tmUpd();if(pend!=null){cmd('seekTo',[pend,true]);cmd('playVideo');pend=null}}
+ if(typeof i.playerState==='number')playing=i.playerState===1});
+function tmUpd(){const t=$('#tm');t.readOnly=synced;if(synced)t.value=fm(T);else t.placeholder='mm:ss'}
+function tagT(){return synced?T:pt($('#tm').value)}
+function sk(d){const t=Math.max(0,tagT()+d);cmd('seekTo',[t,true]);if(!synced)$('#tm').value=fm(t)}
+function pp(){cmd(playing?'pauseVideo':'playVideo')}
+function go(i){const x=view[i];if(x.g.vid!==vid){pend=x.e.t;$('#url').value=x.g.url;load();return}cmd('seekTo',[x.e.t,true]);cmd('playVideo');if(!synced)$('#tm').value=fm(x.e.t)}
+function add(val){if(!vid){$('#msg').textContent='Carrega primeiro um vídeo.';return}
+ const t=Math.max(0,tagT()-(+$('#pre').value||0)),v={};cfg.fields.forEach((f,i)=>{const x=i?sticky[f.id]:val;if(x)v[f.id]=x});
+ ev.push({t:Math.floor(t),v,n:''});ev.sort((a,b)=>a.t-b.t);save();rl();rf();$('#msg').textContent='Registado às '+fm(t)+' — '+val}
+function ns(i,v){sticky[cfg.fields[i].id]=v}
+function rs(){const F=cfg.fields;$('#sticky').innerHTML=F.slice(1).map((f,j)=>`<div><label>${esc(f.label)}</label>${f.opts.length?`<select onchange="ns(${j+1},this.value)"><option value="">—</option>${f.opts.map(o=>`<option${sticky[f.id]===o?' selected':''}>${esc(o)}</option>`).join('')}</select>`:`<input type="text" value="${esc(sticky[f.id]||'')}" oninput="ns(${j+1},this.value)">`}</div>`).join('');
+ $('#acts').innerHTML=(F[0]?F[0].opts:[]).map((o,i)=>`<button onclick="add(cfg.fields[0].opts[${i}])"><small>${i<9?i+1:i==9?0:''}</small>${esc(o)}</button>`).join('')}
+function ents(){const l=[];games.filter(g=>scope==='all'||g.vid===vid).forEach(g=>{const a=g.vid===vid?ev:(cache[g.vid]=ST.get('ft_ev_'+g.vid)||[]);a.forEach(e=>l.push({e,g}))});return l}
+function pe(g){ST.set('ft_ev_'+g.vid,g.vid===vid?ev:cache[g.vid])}
+function ok(x){return Object.entries(filt).every(([k,v])=>!v||x.e.v[k]===v)&&(scope==='one'||Object.entries(gfilt).every(([k,v])=>!v||x.g[k]===v))&&(!q||(JSON.stringify(x.e.v)+x.e.n+lab(x.g)).toLowerCase().includes(q))}
+const srt=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>String(x).localeCompare(String(y),'pt',{numeric:true}));
+const sel=(l,vals,c,tgt)=>`<div><label>${esc(l)}</label><select onchange="${tgt}=this.value;rl()"><option value="">Todos</option>${vals.map(o=>`<option${c===o?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
+function rf(){const A=ents(),gh=scope==='all'?GF.map(([k,l])=>sel(l,srt(games.map(g=>g[k])),gfilt[k],'gfilt.'+k)).join(''):'';
+ $('#fl').innerHTML=gh+cfg.fields.map((f,i)=>sel(f.label,srt(A.map(x=>x.e.v[f.id])),filt[f.id],`filt[cfg.fields[${i}].id]`)).join('')}
+function rl(){const A=ents();view=A.filter(ok);const a=cfg.fields[0]&&cfg.fields[0].id;
+ $('#cnt').textContent=`— ${view.length} de ${A.length}`;const c={};view.forEach(x=>{const k=x.e.v[a];if(k)c[k]=(c[k]||0)+1});
+ $('#sum').textContent=Object.entries(c).map(([k,n])=>k+' '+n).join(' · ');
+ $('#lst').innerHTML=view.map((x,i)=>{const e=x.e;return`<div class="it"><button class="tt" onclick="go(${i})">${fm(e.t)}</button><div class="tg">${scope==='all'?`<span class="mu">${esc(lab(x.g))}</span>`:''}${cfg.fields.map(f=>e.v[f.id]?`<span class="tag${f.id===a?' a':''}">${esc(e.v[f.id])}</span>`:'').join('')}<input class="nt" value="${esc(e.n)}" placeholder="Nota…" onchange="nt(${i},this.value)"></div><button class="x" onclick="del(${i})">×</button></div>`}).join('')||'<p class="mu">Sem registos.</p>'}
+function del(i){const x=view[i],a=x.g.vid===vid?ev:cache[x.g.vid];a.splice(a.indexOf(x.e),1);pe(x.g);rf();rl()}
+function nt(i,v){view[i].e.n=v;pe(view[i].g)}
+function delAll(){if(ev.length&&confirm('Apagar todos os registos deste vídeo?')){ev=[];save();rf();rl()}}
+function clr(){filt={};gfilt={};q='';$('#q').value='';rf();rl()}
+function rc(){$('#cfg').innerHTML=cfg.fields.map((f,i)=>`<div class="cf"><div class="row"><input type="text" value="${esc(f.label)}" onchange="cfg.fields[${i}].label=this.value;cu()"><button class="x" onclick="rmF(${i})">Remover</button></div>
+ <textarea onchange="cfg.fields[${i}].opts=this.value.split('\\n').map(s=>s.trim()).filter(Boolean);cu()">${esc(f.opts.join('\n'))}</textarea></div>`).join('')}
+function cu(){sv();rs();rc();rf();rl()}
+function addF(){cfg.fields.push({id:'p'+Date.now(),label:'Novo parâmetro',opts:[]});cu()}
+function rmF(i){if(cfg.fields.length>1){cfg.fields.splice(i,1);cu()}}
+function preset(k){if(confirm('Substituir a configuração atual pelo modelo? Os registos já feitos mantêm-se.')){cfg=JSON.parse(JSON.stringify(P[k]));sticky={};filt={};cu()}}
+function rows(all){const F=cfg.fields,H=['Competição','Jornada','Adversário','Local','Data','Tempo','Segundos',...F.map(f=>f.label),'Nota','Link'];
+ const R=(all?ents():view).map(({e,g})=>[g.comp,g.jor,g.adv,g.loc,g.data,fm(e.t),e.t,...F.map(f=>e.v[f.id]||''),e.n,'https://youtu.be/'+g.vid+'?t='+e.t]);return[H,...R]}
+async function csv(f){if(!ents().length){$('#msg').textContent='Não há registos para exportar.';return}
+ const txt='\uFEFF'+rows(!f).map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ try{const u=URL.createObjectURL(new Blob([txt],{type:'text/csv'})),l=document.createElement('a');l.href=u;l.download=(scope==='all'?'acoes_todos_jogos':'acoes_'+vid)+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+ catch(e){$('#msg').textContent='Não foi possível guardar o ficheiro. Usa “Copiar para Excel”.'}}
+async function cp(){if(!view.length)return;try{await navigator.clipboard.writeText(rows(false).map(r=>r.join('\t')).join('\n'));$('#msg').textContent='Copiado. Cola numa folha de Excel ou Google Sheets.'}catch(e){$('#msg').textContent='Não foi possível copiar automaticamente.'}}
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;
+ if(/^[0-9]$/.test(e.key)){const o=cfg.fields[0].opts[e.key==='0'?9:+e.key-1];if(o){add(o);e.preventDefault()}}
+ else if(e.key===' '){pp();e.preventDefault()}else if(e.key==='ArrowLeft'){sk(-5);e.preventDefault()}else if(e.key==='ArrowRight'){sk(5);e.preventDefault()}});
+const pr=ST.get('ft_pre');if(pr!=null)$('#pre').value=pr;
+rs();rc();gl();rf();rl();const last=ST.get('ft_last');if(last){$('#url').value=last}
+</script></body></html>
