@@ -9,7 +9,7 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:1280px;margin:0 auto;padding:14px}
+.wrap{max-width:none;margin:0;padding:14px}
 h1{font-size:19px;margin:0 0 10px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 input,select,textarea,button{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
@@ -19,7 +19,7 @@ button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
 main{display:grid;grid-template-columns:var(--cols,minmax(0,1.15fr) minmax(0,1fr));gap:14px;margin-top:12px}
 @media(max-width:900px){main{grid-template-columns:1fr}}
 .card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
-.vid{position:relative;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.vid{position:relative;aspect-ratio:16/9;max-height:80vh;background:#000;border-radius:12px;overflow:hidden}
 .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #ph[hidden]{display:none}
 #ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#aaa;text-align:center;padding:20px}
@@ -46,33 +46,27 @@ summary{cursor:pointer;font-weight:600}
 .nt{flex:1 1 100%;font-size:13px;padding:4px 8px}
 .x{color:var(--dg);padding:2px 9px}
 #lst{max-height:60vh;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:6px 8px;border-top:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:600;font-size:12px;border-top:0}
+#lg[hidden]{display:none}
+.nv button.on,.sz button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .gm{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .gm label{font-size:12px;color:var(--mu);display:block}
 .gm input,.gm select{width:100%}
 </style></head><body><div class="wrap">
-<h1>⚽ Registo de ações em vídeo</h1>
+<div class="row" style="justify-content:space-between;margin-bottom:10px"><h1 style="margin:0">⚽ Registo de ações em vídeo</h1><nav class="nv row" style="gap:6px"><span id="uc" class="mu"></span><button id="n1" onclick="nav('registo')">Registo</button><button id="n3" onclick="nav('jogos')">🏟 Jogos</button><button id="n2" onclick="nav('config')">⚙ Configuração</button></nav></div>
+<div id="v1">
 <div class="row"><input id="url" type="text" placeholder="Cola aqui o link do vídeo do YouTube"><button class="p" onclick="load()">Carregar vídeo</button><select id="gl" onchange="og(this.value)" style="max-width:260px"></select></div>
-<div class="card" style="margin-top:10px"><div class="gm">
-<div><label>Competição</label><input type="text" id="g_comp" list="dl_comp" oninput="gs('comp',this.value)"></div>
-<div><label>Jornada</label><input type="text" id="g_jor" oninput="gs('jor',this.value)"></div>
-<div><label>Adversário</label><input type="text" id="g_adv" list="dl_adv" oninput="gs('adv',this.value)"></div>
-<div><label>Data</label><input type="date" id="g_data" onchange="gs('data',this.value)"></div>
-<div><label>Local</label><select id="g_loc" onchange="gs('loc',this.value)"><option value="">—</option><option>Casa</option><option>Fora</option><option>Neutro</option></select></div>
-<div style="align-self:end"><button class="x" onclick="rmg()">Remover jogo</button></div></div>
-<datalist id="dl_comp"></datalist><datalist id="dl_adv"></datalist></div>
+<div class="card" style="margin-top:10px"><div class="row" style="justify-content:space-between"><span id="gsum"><b>Jogo:</b> —</span><button onclick="nav('jogos')">Gerir jogos</button></div></div>
 <main>
 <section>
  <div class="vid"><iframe id="fr" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div id="ph">Cola um link do YouTube para começar</div></div>
  <div class="bar"><b>Tempo</b><input id="tm" value="0:00" readonly>
   <button onclick="sk(-5)">−5 s</button><button onclick="pp()">▶ / ❚❚</button><button onclick="sk(5)">+5 s</button>
-  <span class="mu">Tamanho do vídeo <input type="range" id="vw" min="35" max="100" step="5" value="57" oninput="vws(this.value)" style="width:110px;padding:0"></span><span class="mu">Recuar ao registar <input type="number" id="pre" value="3" min="0" max="30" style="width:60px" onchange="sv()"> s</span></div>
+  <span class="sz row" style="gap:4px"><b>Vídeo</b><button data-p="40" onclick="vws(40)">Pequeno</button><button data-p="57" onclick="vws(57)">Médio</button><button data-p="100" onclick="vws(100)">Grande</button></span><span class="mu">Recuar ao registar <input type="number" id="pre" value="3" min="0" max="30" style="width:60px" onchange="sv()"> s</span></div>
  <div id="sync" class="warn" hidden>Não foi possível sincronizar com o leitor. Escreve o tempo (mm:ss) no campo “Tempo” antes de registar.</div>
  <div class="card"><div id="sticky" class="grid"></div><div id="acts" class="acts"></div>
   <p class="mu" style="margin:8px 0 0">Atalhos: 1–9 (e 0) registam a ação · Espaço pausa/retoma · ← → saltam 5 s</p></div>
- <div class="card"><details><summary>⚙ Configurar parâmetros e ações</summary>
-  <div class="row" style="margin:10px 0"><span class="mu">Modelos:</span><button onclick="preset('gr')">Guarda-redes</button><button onclick="preset('campo')">Jogadores de campo</button></div>
-  <p class="mu">O 1.º parâmetro define os botões de ação. Uma opção por linha; sem opções, o campo fica de texto livre (ex.: jogador).</p>
-  <div id="cfg"></div><button onclick="addF()">+ Adicionar parâmetro</button></details></div>
+
 </section>
 <section>
  <div class="card"><b>Registos</b> <select id="scope" onchange="scope=this.value;clr()"><option value="one">Este jogo</option><option value="all">Todos os jogos</option></select> <span id="cnt" class="mu"></span>
@@ -84,7 +78,28 @@ summary{cursor:pointer;font-weight:600}
   <div class="row" style="margin-top:10px"><button class="p" id="bd" onclick="csv(1)">Exportar CSV (filtrados)</button><button onclick="csv(0)">Exportar CSV (todos)</button><button onclick="cp()">Copiar para Excel</button><button class="x" onclick="delAll()">Apagar todos</button></div>
   <p class="mu" id="msg"></p></div>
 </section></main></div>
+<div id="v3" hidden><div class="card"><div class="row" style="justify-content:space-between"><b style="font-size:17px">Jogos</b><div class="row"><input type="text" id="gq" placeholder="Pesquisar jogos…" oninput="rg()"><button id="mg" hidden onclick="migrate()">Importar dados deste browser</button><button class="p" onclick="ge(-1)">+ Novo jogo</button></div></div>
+<div id="jf" class="card" hidden style="margin-top:10px;background:var(--bg)"><div class="gm">
+<div style="grid-column:1/-1"><label>Link do vídeo (YouTube)</label><input type="text" id="j_url"></div>
+<div><label>Competição</label><input type="text" id="j_comp" list="dl_comp"></div>
+<div><label>Jornada</label><input type="text" id="j_jor"></div>
+<div><label>Adversário</label><input type="text" id="j_adv" list="dl_adv"></div>
+<div><label>Data</label><input type="date" id="j_data"></div>
+<div><label>Local</label><select id="j_loc"><option value="">—</option><option>Casa</option><option>Fora</option><option>Neutro</option></select></div>
+<div><label>Equipa / escalão</label><input type="text" id="j_eq"></div>
+<div><label>Resultado</label><input type="text" id="j_res" placeholder="ex.: 2-1"></div>
+<div style="grid-column:1/-1"><label>Notas</label><textarea id="j_nt" style="width:100%;min-height:60px"></textarea></div></div>
+<div class="row" style="margin-top:8px"><button class="p" onclick="gsave()">Guardar jogo</button><button onclick="$('#jf').hidden=true">Cancelar</button><span id="jm" class="mu"></span></div></div>
+<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Data</th><th>Competição</th><th>Jornada</th><th>Adversário</th><th>Local</th><th>Equipa</th><th>Resultado</th><th>Registos</th><th>Criado por</th><th>Última alteração</th><th></th></tr></thead><tbody id="gtb"></tbody></table></div>
+<datalist id="dl_comp"></datalist><datalist id="dl_adv"></datalist></div></div>
+<div id="v2" hidden><div class="card" style="max-width:900px"><h2 style="margin:0 0 6px;font-size:17px">Configuração de parâmetros e ações</h2>
+ <p class="mu">Define os parâmetros registados em cada ação. As alterações guardam-se automaticamente.</p>
+ <div class="row" style="margin:10px 0"><span class="mu">Modelos:</span><button onclick="preset('gr')">Guarda-redes</button><button onclick="preset('campo')">Jogadores de campo</button></div>
+ <p class="mu">O 1.º parâmetro define os botões de ação (e os atalhos 1–9, 0). Uma opção por linha; sem opções, o campo fica de texto livre (ex.: jogador).</p>
+ <div id="cfg"></div><div class="row" style="margin-top:10px"><button onclick="addF()">+ Adicionar parâmetro</button><button class="p" onclick="nav('registo')">Concluído — voltar ao registo</button></div></div></div></div>
+<div id="lg" hidden style="position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:380px;text-align:center"><h2 style="margin:0 0 8px">⚽ Registo de ações em vídeo</h2><p class="mu">Inicia sessão com a tua conta Google para continuar.</p><div id="gbtn" style="display:flex;justify-content:center;margin:14px 0"></div><p id="lm" class="mu"></p></div></div>
 <script>
+var FBC={apiKey:'COLOCA_AQUI_A_apiKey',authDomain:'COLOCA_AQUI',projectId:'COLOCA_AQUI',appId:'COLOCA_AQUI'},FBon=!String(FBC.apiKey).startsWith('COLOCA'),FB=null,ready=!FBon;
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ST={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const RES=['Positivo','Neutro','Negativo'],FASE=['Org. ofensiva','Org. defensiva','Transição ofensiva','Transição defensiva','Bola parada'],LADO=['Esquerdo','Central','Direito'];
@@ -93,25 +108,22 @@ gr:{fields:[{id:'acao',label:'Ação',opts:['Defesa','Saída aos pés','Saída a
 {id:'res',label:'Resultado',opts:RES},{id:'fase',label:'Fase de jogo',opts:FASE},{id:'zona',label:'Zona',opts:['Pequena área','Grande área','Fora da área','Meio-campo','Campo adversário']},{id:'lado',label:'Lado',opts:LADO},{id:'jog',label:'Jogador',opts:[]}]},
 campo:{fields:[{id:'acao',label:'Ação',opts:['Passe','Remate','Drible','Desarme','Interceção','Duelo aéreo','Pressão','Cruzamento','Perda de bola','Recuperação de bola']},
 {id:'res',label:'Resultado',opts:RES},{id:'fase',label:'Fase de jogo',opts:FASE},{id:'zona',label:'Zona',opts:['Terço defensivo','Terço médio','Terço ofensivo']},{id:'lado',label:'Lado',opts:LADO},{id:'jog',label:'Jogador',opts:[]}]}};
-let games=ST.get('ft_games')||[],gfilt={},scope='one',pend=null,view=[],cache={},cfg=ST.get('ft_cfg')||JSON.parse(JSON.stringify(P.gr)),vid=null,ev=[],T=0,synced=false,playing=false,filt={},q='',sticky={},ping=null;
+let games=FBon?[]:(ST.get('ft_games')||[]),gfilt={},scope='one',pend=null,view=[],cache={},cfg=ST.get('ft_cfg')||JSON.parse(JSON.stringify(P.gr)),vid=null,ev=[],T=0,synced=false,playing=false,filt={},q='',sticky={},ping=null;
 const fm=t=>{t=Math.max(0,Math.floor(t));const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0')};
 const pt=s=>{const p=String(s).trim().split(':').map(Number);if(p.some(isNaN))return 0;return p.reduce((a,b)=>a*60+b,0)};
 const GF=[['comp','Competição'],['jor','Jornada'],['adv','Adversário'],['loc','Local']];
 const cur=()=>games.find(g=>g.vid===vid);
 const lab=g=>[g.jor&&'J'+g.jor,g.adv&&'vs '+g.adv,g.comp].filter(Boolean).join(' · ')||'Jogo '+(games.indexOf(g)+1)+' (sem identificação)';
-function sg(){ST.set('ft_games',games);gl()}
+function sg(g){DB.putGame(g);gl()}
 function gl(){$('#gl').innerHTML='<option value="">Jogos guardados…</option>'+games.map(g=>`<option value="${g.vid}"${g.vid===vid?' selected':''}>${esc(lab(g))}</option>`).join('');
  ['comp','adv'].forEach(k=>$('#dl_'+k).innerHTML=[...new Set(games.map(g=>g[k]).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join(''))}
-function gfill(){const g=cur()||{};['comp','jor','adv','data','loc'].forEach(k=>$('#g_'+k).value=g[k]||'');gl()}
-function gs(k,v){const g=cur();if(!g){$('#msg').textContent='Carrega primeiro um vídeo.';return}g[k]=v;sg();rf();rl()}
+function gfill(){const g=cur();$('#gsum').innerHTML=g?'<b>Jogo:</b> '+esc(lab(g))+(g.data?' · '+esc(g.data):'')+(g.loc?' · '+esc(g.loc):''):'<b>Jogo:</b> nenhum carregado';gl()}
 function og(v){const g=games.find(x=>x.vid===v);if(g){$('#url').value=g.url;load()}}
-function rmg(){const g=cur();if(g&&confirm('Remover este jogo e todos os seus registos?')){games=games.filter(x=>x!==g);try{localStorage.removeItem('ft_ev_'+g.vid)}catch(e){}ev=[];vid=null;sg();$('#fr').src='about:blank';$('#ph').hidden=false;gfill();clr()}}
 function sv(){ST.set('ft_cfg',cfg);ST.set('ft_pre',$('#pre').value)}
-function save(){if(vid)ST.set('ft_ev_'+vid,ev)}
 function cmd(f,a){const w=$('#fr').contentWindow;if(w)w.postMessage(JSON.stringify({event:'command',func:f,args:a||[]}),'*')}
-function load(){const u=$('#url').value.trim(),m=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
+function load(){if(!ready){$('#msg').textContent='A sincronizar com a base de dados… tenta de novo dentro de instantes.';return}const u=$('#url').value.trim(),m=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
  if(!m){$('#msg').textContent='Link não reconhecido. Usa um link do YouTube.';return}
- vid=m[1];ST.set('ft_last',u);ev=ST.get('ft_ev_'+vid)||[];let g=cur();if(!g){g={vid,comp:'',jor:'',adv:'',data:'',loc:'',url:u};games.push(g);sg()}gfill();synced=false;T=0;$('#ph').hidden=true;$('#sync').hidden=true;$('#msg').textContent='';
+ vid=m[1];ST.set('ft_last',u);ev=cache[vid]||(cache[vid]=[]);let g=cur();if(!g){g={vid,comp:'',jor:'',adv:'',data:'',loc:'',url:u};stamp(g,true);games.push(g);sg(g)}gfill();synced=false;T=0;$('#ph').hidden=true;$('#sync').hidden=true;$('#msg').textContent='';
  $('#fr').src='https://www.youtube.com/embed/'+vid+'?enablejsapi=1&playsinline=1&rel=0';tmUpd();
  clearInterval(ping);let n=0;ping=setInterval(()=>{n++;if(synced){clearInterval(ping);return}
   const w=$('#fr').contentWindow;if(w)w.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*');
@@ -125,14 +137,13 @@ function tagT(){return synced?T:pt($('#tm').value)}
 function sk(d){const t=Math.max(0,tagT()+d);cmd('seekTo',[t,true]);if(!synced)$('#tm').value=fm(t)}
 function pp(){cmd(playing?'pauseVideo':'playVideo')}
 function go(i){const x=view[i];if(x.g.vid!==vid){pend=x.e.t;$('#url').value=x.g.url;load();return}cmd('seekTo',[x.e.t,true]);cmd('playVideo');if(!synced)$('#tm').value=fm(x.e.t)}
-function add(val){if(!vid){$('#msg').textContent='Carrega primeiro um vídeo.';return}
+function add(val){if(!user)return;if(!vid){$('#msg').textContent='Carrega primeiro um vídeo.';return}
  const t=Math.max(0,tagT()-(+$('#pre').value||0)),v={};cfg.fields.forEach((f,i)=>{const x=i?sticky[f.id]:val;if(x)v[f.id]=x});
- ev.push({t:Math.floor(t),v,n:''});ev.sort((a,b)=>a.t-b.t);save();rl();rf();$('#msg').textContent='Registado às '+fm(t)+' — '+val}
+ const o={id:uid(),vid,t:Math.floor(t),v,n:''};stamp(o,true);ev.push(o);ev.sort((a,b)=>a.t-b.t);DB.putEv(o);rl();rf();$('#msg').textContent='Registado às '+fm(t)+' — '+val}
 function ns(i,v){sticky[cfg.fields[i].id]=v}
 function rs(){const F=cfg.fields;$('#sticky').innerHTML=F.slice(1).map((f,j)=>`<div><label>${esc(f.label)}</label>${f.opts.length?`<select onchange="ns(${j+1},this.value)"><option value="">—</option>${f.opts.map(o=>`<option${sticky[f.id]===o?' selected':''}>${esc(o)}</option>`).join('')}</select>`:`<input type="text" value="${esc(sticky[f.id]||'')}" oninput="ns(${j+1},this.value)">`}</div>`).join('');
  $('#acts').innerHTML=(F[0]?F[0].opts:[]).map((o,i)=>`<button onclick="add(cfg.fields[0].opts[${i}])"><small>${i<9?i+1:i==9?0:''}</small>${esc(o)}</button>`).join('')}
-function ents(){const l=[];games.filter(g=>scope==='all'||g.vid===vid).forEach(g=>{const a=g.vid===vid?ev:(cache[g.vid]=ST.get('ft_ev_'+g.vid)||[]);a.forEach(e=>l.push({e,g}))});return l}
-function pe(g){ST.set('ft_ev_'+g.vid,g.vid===vid?ev:cache[g.vid])}
+function ents(){const l=[];games.filter(g=>scope==='all'||g.vid===vid).forEach(g=>{const a=cache[g.vid]||[];a.forEach(e=>l.push({e,g}))});return l}
 function ok(x){return Object.entries(filt).every(([k,v])=>!v||x.e.v[k]===v)&&(scope==='one'||Object.entries(gfilt).every(([k,v])=>!v||x.g[k]===v))&&(!q||(JSON.stringify(x.e.v)+x.e.n+lab(x.g)).toLowerCase().includes(q))}
 const srt=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>String(x).localeCompare(String(y),'pt',{numeric:true}));
 const sel=(l,vals,c,tgt)=>`<div><label>${esc(l)}</label><select onchange="${tgt}=this.value;rl()"><option value="">Todos</option>${vals.map(o=>`<option${c===o?' selected':''}>${esc(o)}</option>`).join('')}</select></div>`;
@@ -141,29 +152,95 @@ function rf(){const A=ents(),gh=scope==='all'?GF.map(([k,l])=>sel(l,srt(games.ma
 function rl(){const A=ents();view=A.filter(ok);const a=cfg.fields[0]&&cfg.fields[0].id;
  $('#cnt').textContent=`— ${view.length} de ${A.length}`;const c={};view.forEach(x=>{const k=x.e.v[a];if(k)c[k]=(c[k]||0)+1});
  $('#sum').textContent=Object.entries(c).map(([k,n])=>k+' '+n).join(' · ');
- $('#lst').innerHTML=view.map((x,i)=>{const e=x.e;return`<div class="it"><button class="tt" onclick="go(${i})">${fm(e.t)}</button><div class="tg">${scope==='all'?`<span class="mu">${esc(lab(x.g))}</span>`:''}${cfg.fields.map(f=>e.v[f.id]?`<span class="tag${f.id===a?' a':''}">${esc(e.v[f.id])}</span>`:'').join('')}<input class="nt" value="${esc(e.n)}" placeholder="Nota…" onchange="nt(${i},this.value)"></div><button class="x" onclick="del(${i})">×</button></div>`}).join('')||'<p class="mu">Sem registos.</p>'}
-function del(i){const x=view[i],a=x.g.vid===vid?ev:cache[x.g.vid];a.splice(a.indexOf(x.e),1);pe(x.g);rf();rl()}
-function nt(i,v){view[i].e.n=v;pe(view[i].g)}
-function delAll(){if(ev.length&&confirm('Apagar todos os registos deste vídeo?')){ev=[];save();rf();rl()}}
+ $('#lst').innerHTML=view.map((x,i)=>{const e=x.e;return`<div class="it"><button class="tt" onclick="go(${i})">${fm(e.t)}</button><div class="tg">${scope==='all'?`<span class="mu">${esc(lab(x.g))}</span>`:''}${cfg.fields.map(f=>e.v[f.id]?`<span class="tag${f.id===a?' a':''}">${esc(e.v[f.id])}</span>`:'').join('')}${e.cb?`<span class="mu" style="font-size:12px">${aud(e)}</span>`:''}<input class="nt" value="${esc(e.n)}" placeholder="Nota…" onchange="nt(${i},this.value)"></div><button class="x" onclick="del(${i})">×</button></div>`}).join('')||'<p class="mu">Sem registos.</p>'}
+function del(i){const x=view[i],a=cache[x.g.vid]||[];a.splice(a.indexOf(x.e),1);DB.delEv(x.e);rf();rl()}
+function nt(i,v){view[i].e.n=v;stamp(view[i].e);DB.putEv(view[i].e);rl()}
+function delAll(){if(vid&&ev.length&&confirm('Apagar todos os registos deste vídeo?')){DB.delAll(vid);rf();rl()}}
 function clr(){filt={};gfilt={};q='';$('#q').value='';rf();rl()}
 function rc(){$('#cfg').innerHTML=cfg.fields.map((f,i)=>`<div class="cf"><div class="row"><input type="text" value="${esc(f.label)}" onchange="cfg.fields[${i}].label=this.value;cu()"><button class="x" onclick="rmF(${i})">Remover</button></div>
  <textarea onchange="cfg.fields[${i}].opts=this.value.split('\\n').map(s=>s.trim()).filter(Boolean);cu()">${esc(f.opts.join('\n'))}</textarea></div>`).join('')}
-function cu(){sv();rs();rc();rf();rl()}
+function cu(){sv();if(FBon&&FB)FB.put('settings','config',{json:JSON.stringify(cfg),ub:who(),ua:new Date().toISOString()});rs();rc();rf();rl()}
 function addF(){cfg.fields.push({id:'p'+Date.now(),label:'Novo parâmetro',opts:[]});cu()}
 function rmF(i){if(cfg.fields.length>1){cfg.fields.splice(i,1);cu()}}
 function preset(k){if(confirm('Substituir a configuração atual pelo modelo? Os registos já feitos mantêm-se.')){cfg=JSON.parse(JSON.stringify(P[k]));sticky={};filt={};cu()}}
-function rows(all){const F=cfg.fields,H=['Competição','Jornada','Adversário','Local','Data','Tempo','Segundos',...F.map(f=>f.label),'Nota','Link'];
- const R=(all?ents():view).map(({e,g})=>[g.comp,g.jor,g.adv,g.loc,g.data,fm(e.t),e.t,...F.map(f=>e.v[f.id]||''),e.n,'https://youtu.be/'+g.vid+'?t='+e.t]);return[H,...R]}
+function rows(all){const F=cfg.fields,H=['Competição','Jornada','Adversário','Local','Data','Tempo','Segundos',...F.map(f=>f.label),'Nota','Criado por','Criado em','Editado por','Editado em','Link'];
+ const R=(all?ents():view).map(({e,g})=>[g.comp,g.jor,g.adv,g.loc,g.data,fm(e.t),e.t,...F.map(f=>e.v[f.id]||''),e.n,e.cb||'',e.ca||'',e.ub||'',e.ua||'','https://youtu.be/'+g.vid+'?t='+e.t]);return[H,...R]}
 async function csv(f){if(!ents().length){$('#msg').textContent='Não há registos para exportar.';return}
  const txt='\uFEFF'+rows(!f).map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(';')).join('\r\n');
  try{const u=URL.createObjectURL(new Blob([txt],{type:'text/csv'})),l=document.createElement('a');l.href=u;l.download=(scope==='all'?'acoes_todos_jogos':'acoes_'+vid)+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
  catch(e){$('#msg').textContent='Não foi possível guardar o ficheiro. Usa “Copiar para Excel”.'}}
 async function cp(){if(!view.length)return;try{await navigator.clipboard.writeText(rows(false).map(r=>r.join('\t')).join('\n'));$('#msg').textContent='Copiado. Cola numa folha de Excel ou Google Sheets.'}catch(e){$('#msg').textContent='Não foi possível copiar automaticamente.'}}
-addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey)return;
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey||$('#v1').hidden)return;
  if(/^[0-9]$/.test(e.key)){const o=cfg.fields[0].opts[e.key==='0'?9:+e.key-1];if(o){add(o);e.preventDefault()}}
  else if(e.key===' '){pp();e.preventDefault()}else if(e.key==='ArrowLeft'){sk(-5);e.preventDefault()}else if(e.key==='ArrowRight'){sk(5);e.preventDefault()}});
-function vws(p){p=+p;$('main').style.setProperty('--cols',p>=100?'1fr':`minmax(0,${p}%) minmax(0,1fr)`);ST.set('ft_vw',p)}
-const vwv=ST.get('ft_vw');if(vwv){$('#vw').value=vwv;vws(vwv)}
+function vws(p){p=+p;$('main').style.setProperty('--cols',p>=100?'1fr':`minmax(0,${p}%) minmax(0,1fr)`);ST.set('ft_vw',p);document.querySelectorAll('.sz button').forEach(b=>b.classList.toggle('on',+b.dataset.p===p))}
+vws(ST.get('ft_vw')||57);
 const pr=ST.get('ft_pre');if(pr!=null)$('#pre').value=pr;
+if(!FBon)games.forEach(g=>{cache[g.vid]=(ST.get('ft_ev_'+g.vid)||[]).map(e=>(e.vid=g.vid,e.id=e.id||uid(),e))});
 rs();rc();gl();rf();rl();const last=ST.get('ft_last');if(last){$('#url').value=last}
-</script></body></html>
+const VID=/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/,JK=['comp','jor','adv','data','loc','eq','res','nt'];
+let eg=-1;
+function rg(){const t=$('#gq').value.toLowerCase();$('#mg').hidden=!(FBon&&(ST.get('ft_games')||[]).length);
+ $('#gtb').innerHTML=games.map((g,i)=>({g,i})).filter(({g})=>!t||JSON.stringify(g).toLowerCase().includes(t)).sort((a,b)=>(b.g.data||'').localeCompare(a.g.data||'')).map(({g,i})=>`<tr><td>${esc(g.data||'—')}</td><td>${esc(g.comp)}</td><td>${esc(g.jor)}</td><td>${esc(g.adv)}</td><td>${esc(g.loc)}</td><td>${esc(g.eq)}</td><td>${esc(g.res)}</td><td>${(cache[g.vid]||[]).length}</td><td>${esc(sh(g.cb))}</td><td>${g.ub?esc(sh(g.ub))+' · '+fd(g.ua):''}</td><td><button class="p" onclick="gopen(${i})">Registar</button> <button onclick="ge(${i})">Editar</button> <button class="x" onclick="gdel(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="11" class="mu">Ainda não há jogos. Carrega em “+ Novo jogo”.</td></tr>'}
+function ge(i){eg=i;const g=i<0?{}:games[i];JK.forEach(k=>$('#j_'+k).value=g[k]||'');$('#j_url').value=g.url||'';$('#j_url').readOnly=i>=0;$('#jm').textContent='';$('#jf').hidden=false;gl()}
+function gsave(){const u=$('#j_url').value.trim(),m=u.match(VID);if(!m){$('#jm').textContent='Link do YouTube inválido.';return}
+ const id=m[1],d={vid:id,url:u};JK.forEach(k=>d[k]=$('#j_'+k).value.trim());
+ if(games.some((x,j)=>x.vid===id&&j!==eg)){$('#jm').textContent='Já existe um jogo com este vídeo.';return}
+ let g;if(eg<0){g=d;stamp(g,true);games.push(g)}else{g=games[eg];Object.assign(g,d);stamp(g)}
+ sg(g);gfill();$('#jf').hidden=true;rg()}
+function gdel(i){const g=games[i];if(!confirm('Remover este jogo e todos os seus registos?'))return;games.splice(i,1);DB.delGame(g);delete cache[g.vid];if(g.vid===vid){vid=null;ev=[];$('#fr').src='about:blank';$('#ph').hidden=false}gl();gfill();rg()}
+function gopen(i){nav('registo');$('#url').value=games[i].url;load()}
+const who=()=>user?(user.email||user.name):'';
+const stamp=(o,n)=>{const t=new Date().toISOString();if(n){o.cb=who();o.ca=t}o.ub=who();o.ua=t};
+const fd=t=>t?new Date(t).toLocaleString('pt-PT',{dateStyle:'short',timeStyle:'short'}):'';
+const sh=s=>String(s||'').split('@')[0];
+const aud=o=>o.cb?esc(sh(o.cb))+' · '+fd(o.ca)+(o.ua&&o.ua!==o.ca?' · editado por '+esc(sh(o.ub))+' · '+fd(o.ua):''):'';
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+let user=null,rt=null;
+function uset(u){user=u;$('#lg').hidden=!!u;$('#uc').innerHTML=u?esc(u.name||u.email)+(FBon?' <button onclick="logout()">Sair</button>':' (modo local)'):''}
+function refresh(){const f=document.activeElement;if(f&&f.className==='nt'){clearTimeout(rt);rt=setTimeout(refresh,1500);return}rf();rl();if(!$('#v3').hidden)rg()}
+window.A={onUser(u){uset(u);if(!u){games=[];cache={};ev=[];vid=null;ready=false;$('#fr').src='about:blank';$('#ph').hidden=false;gl();gfill();refresh()}},
+ onGames(l){games=l;ready=true;gl();gfill();refresh()},
+ onEvents(l){cache={};l.forEach(e=>(cache[e.vid]||(cache[e.vid]=[])).push(e));Object.values(cache).forEach(a=>a.sort((x,y)=>x.t-y.t));ev=vid?(cache[vid]||(cache[vid]=[])):[];refresh()},
+ onCfg(j){try{cfg=JSON.parse(j);ST.set('ft_cfg',cfg);rs();rc();rf();rl()}catch(e){}},
+ onDenied(){$('#lm').textContent='Esta conta não tem permissão de acesso.';FB&&FB.signOut()},
+ onErr(e){$('#msg').textContent='Erro ao guardar na base de dados ('+(e.code||e.message)+').'}};
+const DB={
+ putEv:e=>FBon?FB&&FB.put('events',e.id,e):ST.set('ft_ev_'+e.vid,cache[e.vid]),
+ delEv:e=>FBon?FB&&FB.del('events',e.id):ST.set('ft_ev_'+e.vid,cache[e.vid]),
+ putGame:g=>FBon?FB&&FB.put('games',g.vid,g):ST.set('ft_games',games),
+ delGame:g=>{if(FBon){FB&&FB.delGame(g.vid)}else{ST.set('ft_games',games);try{localStorage.removeItem('ft_ev_'+g.vid)}catch(e){}}},
+ delAll:v=>{const a=cache[v]||[];if(FBon&&FB)FB.delMany('events',a.map(e=>e.id));cache[v]=[];if(v===vid)ev=cache[v];if(!FBon)ST.set('ft_ev_'+v,[])}};
+function logout(){FBon&&FB&&FB.signOut()}
+function initAuth(){if(!FBon){uset({name:'Utilizador local',email:''});return}uset(null);$('#gbtn').innerHTML='<button class="p" onclick="FB&&FB.signIn()">Entrar com Google</button>'}
+function migrate(){const L=ST.get('ft_games')||[];if(!FBon||!ready||!L.length)return;
+ if(!confirm('Enviar '+L.length+' jogo(s) guardados neste browser para a base de dados partilhada?'))return;const w=who(),n=new Date().toISOString();
+ L.forEach(g=>{const o={...g,cb:w,ub:w,ca:g.ca||n,ua:g.ua||g.ca||n};FB.put('games',g.vid,o);(ST.get('ft_ev_'+g.vid)||[]).forEach(e=>{const x={...e,id:e.id||uid(),vid:g.vid,cb:w,ub:w,ca:e.ca||n,ua:e.ua||e.ca||n};FB.put('events',x.id,x)})});
+ ST.set('ft_games_bak',L);ST.set('ft_games',[]);rg();$('#jm').textContent='Dados enviados.'}
+function nav(h){location.hash='#'+h}
+function route(){const h=location.hash,c=h==='#config',j=h==='#jogos';$('#v1').hidden=c||j;$('#v2').hidden=!c;$('#v3').hidden=!j;[['n1',!c&&!j],['n2',c],['n3',j]].forEach(([id,on])=>$('#'+id).classList.toggle('on',on));if(c||j)cmd('pauseVideo');if(c)rc();else if(j){rg();$('#jf').hidden=true}else{rs();rf();rl()}}
+addEventListener('hashchange',route);route();initAuth();
+</script><script type="module">
+if(window.FBon){
+const V='10.12.2',B='https://www.gstatic.com/firebasejs/'+V+'/';
+const {initializeApp}=await import(B+'firebase-app.js');
+const {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}=await import(B+'firebase-auth.js');
+const {initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,setDoc,deleteDoc,onSnapshot,query,where,getDocs,writeBatch}=await import(B+'firebase-firestore.js');
+const app=initializeApp(window.FBC),auth=getAuth(app),db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+const cl=o=>JSON.parse(JSON.stringify(o)),er=e=>A.onErr(e);let un=[];
+window.FB={
+ signIn:()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>{document.getElementById('lm').textContent='Falha no início de sessão ('+(e.code||e.message)+').'}),
+ signOut:()=>signOut(auth),
+ put:(c,id,o)=>setDoc(doc(db,c,id),cl(o),{merge:c==='games'}).catch(er),
+ del:(c,id)=>deleteDoc(doc(db,c,id)).catch(er),
+ delMany:async(c,ids)=>{try{for(let i=0;i<ids.length;i+=400){const b=writeBatch(db);ids.slice(i,i+400).forEach(id=>b.delete(doc(db,c,id)));await b.commit()}}catch(e){er(e)}},
+ delGame:async v=>{try{const s=await getDocs(query(collection(db,'events'),where('vid','==',v)));await FB.delMany('events',s.docs.map(d=>d.id));await deleteDoc(doc(db,'games',v))}catch(e){er(e)}}};
+onAuthStateChanged(auth,u=>{un.forEach(f=>f());un=[];
+ if(!u){A.onUser(null);return}
+ A.onUser({name:u.displayName,email:u.email});const bad=e=>A.onDenied(e);
+ un.push(onSnapshot(collection(db,'games'),s=>A.onGames(s.docs.map(d=>d.data())),bad));
+ un.push(onSnapshot(collection(db,'events'),s=>A.onEvents(s.docs.map(d=>d.data())),bad));
+ un.push(onSnapshot(doc(db,'settings','config'),s=>{if(s.exists()&&!s.metadata.hasPendingWrites)A.onCfg(s.data().json)},bad))});
+}
+</script>
+</body></html>
