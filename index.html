@@ -99,7 +99,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
  <div id="cfg"></div><div class="row" style="margin-top:10px"><button onclick="addF()">+ Adicionar parâmetro</button><button class="p" onclick="nav('registo')">Concluído — voltar ao registo</button></div></div></div></div>
 <div id="lg" hidden style="position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:380px;text-align:center"><h2 style="margin:0 0 8px">⚽ Registo de ações em vídeo</h2><p class="mu">Inicia sessão com a tua conta Google para continuar.</p><div id="gbtn" style="display:flex;justify-content:center;margin:14px 0"></div><p id="lm" class="mu"></p></div></div>
 <script>
-var FBC={apiKey:'COLOCA_AQUI_A_apiKey',authDomain:'COLOCA_AQUI',projectId:'COLOCA_AQUI',appId:'COLOCA_AQUI'},FBon=!String(FBC.apiKey).startsWith('COLOCA'),FB=null,ready=!FBon;
+var FBC={apiKey:'AIzaSyBxieygyZa0LdOfYmeedp-bR0I6FAeX14Q',authDomain:'hencos-sports-analysis.firebaseapp.com',projectId:'hencos-sports-analysis',appId:'1:338523435240:web:63237d4733370ae148595d'},FBon=!String(FBC.apiKey).startsWith('COLOCA'),FB=null,ready=!FBon;
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ST={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const RES=['Positivo','Neutro','Negativo'],FASE=['Org. ofensiva','Org. defensiva','Transição ofensiva','Transição defensiva','Bola parada'],LADO=['Esquerdo','Central','Direito'];
